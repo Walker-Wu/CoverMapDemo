@@ -105,15 +105,19 @@ Grid.prototype.draw = function (ctx) {
             this.pathArr[1] = { lng: start.lng + gridSize / 111, lat: start.lat };
             this.pathArr[2] = { lng: start.lng + gridSize / 111, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
             this.pathArr[3] = { lng: start.lng, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
-            this.pathArr[4] = { lng: end.lng, lat: end.lat };
+            this.pathArr[4] = this.pathArr[0];
         }
         let centre = { lng: 113.364805, lat: 23.140929 };
         let regionalSize = 1;//百度地图1公里
         let reg = new Regional(centre, regionalSize);
-        let start = new Position(reg.max, reg.min);
-        let end = start;
         let gridSize = 0.02;//百度地图20米
-        return new Grid(start, gridSize);
+        let positionArr = [];
+        for (let i = 0; i < 10; i++) {
+            positionArr.push(new Position(reg.max, reg.min));
+        }
+        return positionArr.map(function (p) {
+            return new Grid(p, gridSize);
+        })
     })()
 
 
