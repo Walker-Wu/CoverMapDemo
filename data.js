@@ -77,8 +77,43 @@ Grid.prototype.draw = function (ctx) {
     ctx.stroke();
     ctx.fill();
 }
-/*
-var grid1 = new Grid(sw);
-console.log(grid1);
-grid1.draw(ctx);
-*/
+    /*
+    var grid1 = new Grid(sw);
+    console.log(grid1);
+    grid1.draw(ctx);
+    */
+
+    (function () {
+        //给定中心点和regionalSize，构造区域范围
+        function Regional(centre, regionalSize) {
+            this.max = { lng: '', lat: '' };
+            this.min = { lng: '', lat: '' };
+            this.max.lng = centre.lng + regionalSize / 2 / 111;
+            this.max.lat = centre.lat + regionalSize / 2 / (111 * Math.cos(centre.lat));
+            this.min.lng = centre.lng - regionalSize / 2 / 111;
+            this.min.lat = centre.lat - regionalSize / 2 / (111 * Math.cos(centre.lat));
+        }
+        //给定max点、min点，构造随机点经纬度
+        function Position(max, min) {
+            this.lng = Math.random() * (max.lng - min.lng) + min.lng;
+            this.lat = Math.random() * (max.lat - min.lat) + min.lat;
+        }
+        //给定起始点和gridSize，构造栅格
+        function Grid(start, gridSize) {
+            this.pathArr = [];
+            this.pathArr[0] = { lng: start.lng, lat: start.lat };
+            this.pathArr[1] = { lng: start.lng + gridSize / 111, lat: start.lat };
+            this.pathArr[2] = { lng: start.lng + gridSize / 111, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
+            this.pathArr[3] = { lng: start.lng, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
+            this.pathArr[4] = { lng: end.lng, lat: end.lat };
+        }
+        let centre = { lng: 113.364805, lat: 23.140929 };
+        let regionalSize = 1;//百度地图1公里
+        let reg = new Regional(centre, regionalSize);
+        let start = new Position(reg.max, reg.min);
+        let end = start;
+        let gridSize = 0.02;//百度地图20米
+        return new Grid(start, gridSize);
+    })()
+
+
