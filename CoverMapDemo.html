@@ -28,7 +28,7 @@
             background: #D3D3D3;
         }
 
-        #allmap {
+        #covermap {
             width: 80%;
             height: 80%;
             float: left;
@@ -42,31 +42,17 @@
         }
     </style>
     <title>异步加载地图</title>
+    <script src="data.js"></script>
+    <script src="CoverMap.js"></script>
 </head>
 
 <body>
     <div id="map_container">
-        <div id="allmap"></div>
+        <div id="covermap"></div>
     </div>
 </body>
 
 </html>
 <script type="text/javascript">
-    //百度地图API功能
-    function loadJScript() {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = "http://api.map.baidu.com/api?v=3.0&ak=Qrc3aHbZdONvHowY7ZHXfQbB&callback=init";
-        document.body.appendChild(script);
-    }
-    function init() {
-        var map = new BMap.Map("allmap", { enableMapClick: false });            // 创建Map实例
-        var point = new BMap.Point(113.364805, 23.140929); // 创建点坐标
-        map.centerAndZoom(point, 15);
-        //map.centerAndZoom("广州", 15);
-        map.enableScrollWheelZoom();                 //启用滚轮放大缩小
-        var top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });// 左上角，添加比例尺
-        map.addControl(top_left_control);
-    }
-    window.onload = loadJScript;  //异步加载地图
+    window.onload = loadCMap;  //异步加载地图
 </script>

@@ -2,24 +2,6 @@
 //公式：(Math.random()*(max-min)+min);
 // max - 期望的最大值
 // min - 期望的最小值
-/*
-var lng = 113.364805;
-var lat = 23.140929;
-*/
-var max = { lng: 113.375905, lat: 23.152029 };
-var min = { lng: 113.353705, lat: 23.129829 };
-var coordData = [];
-
-for (let i = 0; i < 1000; i++) {
-    coordData.push(getCoord());
-}
-
-
-function getCoord() {
-    mylng = Math.random() * (max.lng - min.lng) + min.lng;
-    mylat = Math.random() * (max.lat - min.lat) + min.lat;
-    return [mylng, mylat];
-}
 
 //在经线上，相差一纬度约111km，1公里就是 1/111 = 0.009度，这样就是1公里对应的经线度数。
 //在纬线上，相差一经度约111cosα（α该纬线纬度），1KM就是该纬线应约1/(111*cosα)=0.009cosα度，对应度数与纬度相关，这样就是1公里对应的纬线度数。
@@ -27,8 +9,6 @@ function getCoord() {
 //经度范围：(x-L/111, x+L/111)
 //纬度范围：(y-L/(111*cosy), y+L/(111*cosy))
 //只需要精确到小数点后7位，精度就是1CM
-var sw = { lng: 113.364805, lat: 23.140929 };
-
 
 /*
 function draw(swArr, neArr, ctx) {
@@ -51,7 +31,6 @@ function draw(swArr, neArr, ctx) {
     }
 
 }
-*/
 function Grid(point) {
     this.min = point;
     this.max = this.sw2ne(this.min, this.size);
@@ -77,7 +56,6 @@ Grid.prototype.draw = function (ctx) {
     ctx.stroke();
     ctx.fill();
 }
-    /*
     var grid1 = new Grid(sw);
     console.log(grid1);
     grid1.draw(ctx);
@@ -85,39 +63,46 @@ Grid.prototype.draw = function (ctx) {
 
     (function () {
         //给定中心点和regionalSize，构造区域范围
-        function Regional(centre, regionalSize) {
-            this.max = { lng: '', lat: '' };
-            this.min = { lng: '', lat: '' };
-            this.max.lng = centre.lng + regionalSize / 2 / 111;
-            this.max.lat = centre.lat + regionalSize / 2 / (111 * Math.cos(centre.lat));
-            this.min.lng = centre.lng - regionalSize / 2 / 111;
-            this.min.lat = centre.lat - regionalSize / 2 / (111 * Math.cos(centre.lat));
+        function Regional(p, size) {
+            this.pMax = { lng: '', lat: '' };
+            this.pMin = { lng: '', lat: '' };
+            this.pMax.lng = p.lng + size / 2 / 111;
+            this.pMax.lat = p.lat + size / 2 / (111 * Math.cos(p.lat));
+            this.pMin.lng = p.lng - size / 2 / 111;
+            this.pMin.lat = p.lat - size / 2 / (111 * Math.cos(p.lat));
         }
-        //给定max点、min点，构造随机点经纬度
-        function Position(max, min) {
-            this.lng = Math.random() * (max.lng - min.lng) + min.lng;
-            this.lat = Math.random() * (max.lat - min.lat) + min.lat;
+        //给定pMax点、pMin点，构造随机点经纬度
+        function Position(pMax, pMin) {
+            this.lng = Math.random() * (pMax.lng - pMin.lng) + pMin.lng;
+            this.lat = Math.random() * (pMax.lat - pMin.lat) + pMin.lat;
         }
         //给定起始点和gridSize，构造栅格
-        function Grid(start, gridSize) {
-            this.pathArr = [];
-            this.pathArr[0] = { lng: start.lng, lat: start.lat };
-            this.pathArr[1] = { lng: start.lng + gridSize / 111, lat: start.lat };
-            this.pathArr[2] = { lng: start.lng + gridSize / 111, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
-            this.pathArr[3] = { lng: start.lng, lat: start.lat + gridSize / (111 * Math.cos(start.lat)) };
-            this.pathArr[4] = this.pathArr[0];
+        function Grid(p, size) {
+            this.pArr = [];
+            this.pArr[0] = { lng: p.lng, lat: p.lat };
+            this.pArr[1] = { lng: p.lng + size / 111, lat: p.lat };
+            this.pArr[2] = { lng: p.lng + size / 111, lat: p.lat + size / (111 * Math.cos(p.lat)) };
+            this.pArr[3] = { lng: p.lng, lat: p.lat + size / (111 * Math.cos(p.lat)) };
+            this.pArr[4] = this.pArr[0];
+            this.style = '';//rgba(50, 50, 255, 0.3 )
+            this.info = '';
         }
-        let centre = { lng: 113.364805, lat: 23.140929 };
-        let regionalSize = 1;//百度地图1公里
-        let reg = new Regional(centre, regionalSize);
+        //设定区域中心与范围
+        let regCentre = { lng: 113.364805, lat: 23.140929 };
+        let regSize = 1;//百度地图1公里
+        let reg = new Regional(regCentre, regSize);
+        //设定栅格大小
         let gridSize = 0.02;//百度地图20米
-        let positionArr = [];
+        //在设定的区域内随机生成一组测试点
+        let pArr = [];
         for (let i = 0; i < 10; i++) {
-            positionArr.push(new Position(reg.max, reg.min));
+            pArr.push(new Position(reg.pMax, reg.pMin));
         }
-        return positionArr.map(function (p) {
+        //在所有测试点位置分别生成一个栅格
+        let gridArr = pArr.map(function (p) {
             return new Grid(p, gridSize);
         })
+        return gridArr;
     })()
 
 
