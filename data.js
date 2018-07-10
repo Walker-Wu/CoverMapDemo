@@ -61,48 +61,49 @@ Grid.prototype.draw = function (ctx) {
     grid1.draw(ctx);
     */
 
-    (function () {
-        //给定中心点和regionalSize，构造区域范围
-        function Regional(p, size) {
-            this.pMax = { lng: '', lat: '' };
-            this.pMin = { lng: '', lat: '' };
-            this.pMax.lng = p.lng + size / 2 / 111;
-            this.pMax.lat = p.lat + size / 2 / (111 * Math.cos(p.lat));
-            this.pMin.lng = p.lng - size / 2 / 111;
-            this.pMin.lat = p.lat - size / 2 / (111 * Math.cos(p.lat));
-        }
-        //给定pMax点、pMin点，构造随机点经纬度
-        function Position(pMax, pMin) {
-            this.lng = Math.random() * (pMax.lng - pMin.lng) + pMin.lng;
-            this.lat = Math.random() * (pMax.lat - pMin.lat) + pMin.lat;
-        }
-        //给定起始点和gridSize，构造栅格
-        function Grid(p, size) {
-            this.pArr = [];
-            this.pArr[0] = { lng: p.lng, lat: p.lat };
-            this.pArr[1] = { lng: p.lng + size / 111, lat: p.lat };
-            this.pArr[2] = { lng: p.lng + size / 111, lat: p.lat + size / (111 * Math.cos(p.lat)) };
-            this.pArr[3] = { lng: p.lng, lat: p.lat + size / (111 * Math.cos(p.lat)) };
-            this.pArr[4] = this.pArr[0];
-            this.style = '';//rgba(50, 50, 255, 0.3 )
-            this.info = '';
-        }
-        //设定区域中心与范围
-        let regCentre = { lng: 113.364805, lat: 23.140929 };
-        let regSize = 1;//百度地图1公里
-        let reg = new Regional(regCentre, regSize);
-        //设定栅格大小
-        let gridSize = 0.02;//百度地图20米
-        //在设定的区域内随机生成一组测试点
-        let pArr = [];
-        for (let i = 0; i < 10; i++) {
-            pArr.push(new Position(reg.pMax, reg.pMin));
-        }
-        //在所有测试点位置分别生成一个栅格
-        let gridArr = pArr.map(function (p) {
-            return new Grid(p, gridSize);
-        })
-        return gridArr;
-    })()
+var pData = (function () {
+    //给定中心点和regionalSize，构造区域范围
+    function Regional(p, size) {
+        this.pMax = { lng: '', lat: '' };
+        this.pMin = { lng: '', lat: '' };
+        this.pMax.lng = p.lng + size / 111;
+        this.pMin.lng = p.lng - size / 111;
+        this.pMax.lat = p.lat + size / (111 * Math.cos(p.lat));
+        this.pMin.lat = p.lat - size / (111 * Math.cos(p.lat));
+    }
+    //给定pMax点、pMin点，构造随机点经纬度
+    function Position(pMax, pMin) {
+        this.lng = Math.random() * (pMax.lng - pMin.lng) + pMin.lng;
+        this.lat = Math.random() * (pMax.lat - pMin.lat) + pMin.lat;
+    }
+    //给定起始点和gridSize，构造栅格
+    function Grid(p, size) {
+        this.pArr = [];
+        this.pArr[0] = { lng: p.lng, lat: p.lat };
+        this.pArr[1] = { lng: p.lng + size / 111, lat: p.lat };
+        this.pArr[2] = { lng: p.lng + size / 111, lat: p.lat + size / (111 * Math.cos(p.lat)) };
+        this.pArr[3] = { lng: p.lng, lat: p.lat + size / (111 * Math.cos(p.lat)) };
+        this.pArr[4] = this.pArr[0];
+        this.style = '';//rgba(50, 50, 255, 0.3 )
+        this.info = '';
+    }
+    //设定区域中心与范围
+    let regCentre = { lng: 113.364805, lat: 23.140929 };
+    let regSize = 1;//百度地图10公里
+    let reg = new Regional(regCentre, regSize);
+    //设定栅格大小
+    let gridSize = 0.02;//百度地图20米
+    //在设定的区域内随机生成一组测试点
+    let pArr = [];
+    for (let i = 0; i < 10; i++) {
+        pArr.push(new Position(reg.pMax, reg.pMin));
+    }
+    //在所有测试点位置分别生成一个栅格
+    let gridArr = pArr.map(function (p) {
+        return new Grid(p, gridSize);
+    })
+    //return gridArr;
+    return pArr;
+})();
 
 

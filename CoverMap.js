@@ -14,10 +14,11 @@ function initCMap() {
     mp.addControl(top_left_control);
     console.log(mp.getPanes());//地图覆盖物分为了8个层级，顶层为'floatPane'， 低层为'vertexPane'
     var canvasLayer = new BMap.CanvasLayer({
-        update: update
+        //zIndex: 0,
+        //paneName: 'vertexPane',
+        update: updCanvas
     });
-
-    function update() {
+    function updCanvas() {
         var ctx = this.canvas.getContext("2d");
 
         if (!ctx) {
@@ -26,15 +27,11 @@ function initCMap() {
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        var temp = {};
-        ctx.fillStyle = "rgba(50, 50, 255, 0.7)";
+        ctx.fillStyle = "rgba(50, 50, 255, 0.3)";
         ctx.beginPath();
-        var data = [
-            new BMap.Point(116.297047, 39.979542),
-            new BMap.Point(116.321768, 39.88748),
-            new BMap.Point(116.494243, 39.956539)
-        ];
-
+        var data = pData.map(function (p) {
+            return new BMap.Point(p.lng, p.lat);
+        })
         for (var i = 0, len = data.length; i < len; i++) {
             var pixel = mp.pointToPixel(data[i]);
             ctx.fillRect(pixel.x, pixel.y, 30, 30);
