@@ -12,27 +12,35 @@ function initCMap() {
     let top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });//左上角，添加比例尺
     mp.addControl(top_left_control);
     console.log(mp.getPanes());//地图覆盖物分为了8个层级，顶层为'floatPane'， 低层为'vertexPane'
-    var gridLayer = new BMap.CanvasLayer({
+    let gridLayer = new BMap.CanvasLayer({
         //zIndex: 0,
         //paneName: 'vertexPane',
         update: upd
     });
     function upd() {//刷新canvas图层
-        var ctx = this.canvas.getContext("2d");
+        let ctx = this.canvas.getContext("2d");
         if (!ctx) { return; }
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        drawGridArr(ctx, mp, pData);
+        drawGridArr(ctx, mp, gridData);
     }
     mp.addOverlay(gridLayer);//叠加栅格图层到百度地图
 }
-function drawGridArr(ctx, mp, arr) {//绘制一组栅格
-    var data = arr.map(function (p) {
-        return new BMap.Point(p.centre.lng, p.centre.lat);
-    });
-    for (var i = 0, len = data.length; i < len; i++) {
+function drawGridArr(ctx, cMap, gridData) {//绘制一组栅格
+    for (let i = 0, len = gridData.length; i < len; i++) {
         ctx.beginPath();
         ctx.fillStyle = "rgba(50, 50, 255, 0.3)";
-        var pixel = mp.pointToPixel(data[i]);
-        ctx.fillRect(pixel.x, pixel.y, 30, 30);
+        let leftBottom = cMap.pointToPixel(new BMap.Point(gridData[i].sw.lng, gridData[i].sw.lat));
+        let rightBottom = cMap.pointToPixel(new BMap.Point(gridData[i].se.lng, gridData[i].se.lat));
+        let rightTop = cMap.pointToPixel(new BMap.Point(gridData[i].ne.lng, gridData[i].ne.lat));
+        let leftTop = cMap.pointToPixel(new BMap.Point(gridData[i].nw.lng, gridData[i].nw.lat));
+        ctx.moveTo(leftBottom.x, leftBottom.y);
+        ctx.lineTo(rightBottom.x, rightBottom.y);
+        ctx.lineTo(rightTop.x, rightTop.y);
+        ctx.lineTo(leftTop.x, leftTop.y);
+        ctx.lineTo(leftBottom.x, leftBottom.y);
+        //ctx.closePath();  //效率低于lineTo
+        ctx.stroke();
+        ctx.fill();
+        //ctx.fillRect(leftBottom.x, leftBottom.y, 30, 30);
     }
 }

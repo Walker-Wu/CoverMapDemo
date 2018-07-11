@@ -61,7 +61,7 @@ Grid.prototype.draw = function (ctx) {
     grid1.draw(ctx);
     */
 
-var pData = (function () {
+var gridData = (function () {
     function Position(sw, ne) {//构造随机点
         this.lng = Math.random() * (ne.lng - sw.lng) + sw.lng;
         this.lat = Math.random() * (ne.lat - sw.lat) + sw.lat;
@@ -82,7 +82,7 @@ var pData = (function () {
         ne: { lng: 113.380090, lat: 23.148302 }
     };
     let pArr = [];
-    for (let i = 0; i < 100; i++) {//区域范围内生成一组随机点
+    for (let i = 0; i < 1000; i++) {//区域范围内生成一组随机点
         pArr.push(new Position(reg.sw, reg.ne));
     }
     let gridArr = pArr.map(function (p) {//所有随机点位置分别生成栅格
