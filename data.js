@@ -4,7 +4,7 @@
 // min - 期望的最小值
 
 //在经线上，相差一纬度约111km，1公里就是 1/111 = 0.009度，这样就是1公里对应的经线度数。
-//在纬线上，相差一经度约111cosα（α该纬线纬度），1KM就是该纬线应约1/(111*cosα)=0.009cosα度，对应度数与纬度相关，这样就是1公里对应的纬线度数。
+//在纬线上，相差一经度约111cosα（α该纬线纬度），1KM就是该纬线应约1/(111*cosα)=0.009cosα度。
 //假设当前定位的经度是x，纬度为y，那附近L公里的经度范围计算得出来如下：
 //经度范围：(x-L/111, x+L/111)
 //纬度范围：(y-L/(111*cosy), y+L/(111*cosy))
@@ -62,48 +62,34 @@ Grid.prototype.draw = function (ctx) {
     */
 
 var pData = (function () {
-    //给定中心点和regionalSize，构造区域范围
-    function Regional(p, size) {
-        this.pMax = { lng: '', lat: '' };
-        this.pMin = { lng: '', lat: '' };
-        this.pMax.lng = p.lng + size / 111;
-        this.pMin.lng = p.lng - size / 111;
-        this.pMax.lat = p.lat + size / (111 * Math.cos(p.lat));
-        this.pMin.lat = p.lat - size / (111 * Math.cos(p.lat));
+    function Position(sw, ne) {//构造随机点
+        this.lng = Math.random() * (ne.lng - sw.lng) + sw.lng;
+        this.lat = Math.random() * (ne.lat - sw.lat) + sw.lat;
     }
-    //给定pMax点、pMin点，构造随机点经纬度
-    function Position(pMax, pMin) {
-        this.lng = Math.random() * (pMax.lng - pMin.lng) + pMin.lng;
-        this.lat = Math.random() * (pMax.lat - pMin.lat) + pMin.lat;
-    }
-    //给定起始点和gridSize，构造栅格
-    function Grid(p, size) {
-        this.pArr = [];
-        this.pArr[0] = { lng: p.lng, lat: p.lat };
-        this.pArr[1] = { lng: p.lng + size / 111, lat: p.lat };
-        this.pArr[2] = { lng: p.lng + size / 111, lat: p.lat + size / (111 * Math.cos(p.lat)) };
-        this.pArr[3] = { lng: p.lng, lat: p.lat + size / (111 * Math.cos(p.lat)) };
-        this.pArr[4] = this.pArr[0];
+    function Grid(around) {//构造栅格
+        this.sw = around.sw;
+        this.se = around.se;
+        this.ne = around.ne;
+        this.nw = around.nw;
         this.style = '';//rgba(50, 50, 255, 0.3 )
         this.info = '';
+        this.centre = around.centre;
+        this.size = around.size;//单位米
     }
-    //设定区域中心与范围
-    let regCentre = { lng: 113.364805, lat: 23.140929 };
-    let regSize = 1;//百度地图10公里
-    let reg = new Regional(regCentre, regSize);
-    //设定栅格大小
-    let gridSize = 0.02;//百度地图20米
-    //在设定的区域内随机生成一组测试点
+    let reg = {//设定区域范围
+        centre: { lng: 113.364805, lat: 23.140929 },
+        sw: { lng: 113.349529, lat: 23.133497 },
+        ne: { lng: 113.380090, lat: 23.148302 }
+    };
     let pArr = [];
-    for (let i = 0; i < 10; i++) {
-        pArr.push(new Position(reg.pMax, reg.pMin));
+    for (let i = 0; i < 100; i++) {//区域范围内生成一组随机点
+        pArr.push(new Position(reg.sw, reg.ne));
     }
-    //在所有测试点位置分别生成一个栅格
-    let gridArr = pArr.map(function (p) {
-        return new Grid(p, gridSize);
+    let gridArr = pArr.map(function (p) {//所有随机点位置分别生成栅格
+        return new Grid(getAround(p.lng, p.lat, 10.0));
     })
-    //return gridArr;
-    return pArr;
+    return gridArr;
+    //return pArr;
 })();
 
 
