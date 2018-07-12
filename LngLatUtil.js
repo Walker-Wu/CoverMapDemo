@@ -45,7 +45,7 @@ function getAround(lng, lat, raidus) {
  * @param lat1 
  * @param lng2 
  * @param lat2 
- * @return 
+ * @return
  */
 function getDistance(lng1, lat1, lng2, lat2) {
     let radLat1 = lat1 * RAD;

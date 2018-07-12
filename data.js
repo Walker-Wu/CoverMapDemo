@@ -68,7 +68,7 @@ var gridData = (function () {
     let gridArr = pArr.map(function (p) {//所有随机点位置分别生成栅格
         let around = getAround(p.lng, p.lat, 10.0);
         let grid = new Grid(around);
-        grid.style = 'rgba(50, 50, 255, 0.3 )';
+        grid.style = 'rgba(50, 50, ' + 255 * Math.random() + ', ' + Math.random() + ' )';
         grid.info = pArr.indexOf(p);
         return grid;
     })
