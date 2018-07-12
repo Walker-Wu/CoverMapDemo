@@ -11,26 +11,6 @@
 //只需要精确到小数点后7位，精度就是1CM
 
 /*
-function draw(swArr, neArr, ctx) {
-
-    for (var i = 0, len = swArr.length; i < len; i++) {
-        ctx.beginPath();
-
-        // 绘制时需要对经纬度进行转换
-        var swPixel = map.pointToPixel(swArr[i]);
-        var nePixel = map.pointToPixel(neArr[i]);
-
-        ctx.moveTo(swPixel.x, swPixel.y);
-        ctx.lineTo(swPixel.x, nePixel.y);
-        ctx.lineTo(nePixel.x, nePixel.y);
-        ctx.lineTo(nePixel.x, swPixel.y);
-        //ctx.closePath();  //效率低于lineTo
-        ctx.lineTo(swPixel.x, swPixel.y);
-        ctx.stroke();
-        ctx.fill();
-    }
-
-}
 function Grid(point) {
     this.min = point;
     this.max = this.sw2ne(this.min, this.size);
@@ -71,10 +51,10 @@ var gridData = (function () {
         this.se = around.se;
         this.ne = around.ne;
         this.nw = around.nw;
-        this.style = '';//rgba(50, 50, 255, 0.3 )
-        this.info = '';
         this.centre = around.centre;
         this.size = around.size;//单位米
+        this.style = '';//rgba(50, 50, 255, 0.3 )
+        this.info = '';
     }
     let reg = {//设定区域范围
         centre: { lng: 113.364805, lat: 23.140929 },
@@ -86,7 +66,11 @@ var gridData = (function () {
         pArr.push(new Position(reg.sw, reg.ne));
     }
     let gridArr = pArr.map(function (p) {//所有随机点位置分别生成栅格
-        return new Grid(getAround(p.lng, p.lat, 10.0));
+        let around = getAround(p.lng, p.lat, 10.0);
+        let grid = new Grid(around);
+        grid.style = 'rgba(50, 50, 255, 0.3 )';
+        grid.info = pArr.indexOf(p);
+        return grid;
     })
     return gridArr;
     //return pArr;
