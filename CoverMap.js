@@ -11,12 +11,7 @@ function init() {
     mp.enableScrollWheelZoom();//启用滚轮放大缩小
     let top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });//左上角，添加比例尺
     mp.addControl(top_left_control);
-    //console.log(mp.getPanes());//地图覆盖物分为了8个层级，顶层为'floatPane'， 低层为'vertexPane'
-    let gridLayer = new BMap.CanvasLayer({
-        //zIndex: 0,
-        //paneName: 'vertexPane',
-        update: updGridLayer
-    });
+    let gridLayer = new BMap.CanvasLayer({ update: updGridLayer });
     function updGridLayer() {//刷新canvas图层
         let ctx = this.canvas.getContext("2d");
         if (!ctx) { return; }

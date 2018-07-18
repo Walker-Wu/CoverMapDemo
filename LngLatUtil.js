@@ -1,6 +1,3 @@
-const EARTH_RADIUS = 6378137;
-const RAD = Math.PI / 180.0;
-
 //@see http://snipperize.todayclose.com/snippet/php/SQL-Query-to-Find-All-Retailers-Within-a-Given-Radius-of-a-Latitude-and-Longitude--65095/   
 //The circumference of the earth is 24,901 miles.  
 //24,901/360 = 69.17 miles / degree    
@@ -38,6 +35,9 @@ function getAround(lng, lat, raidus) {
 
     return { sw: sw, se: se, ne: ne, nw: nw, centre: centre, size: size };
 }
+
+const EARTH_RADIUS = 6378137;
+const RAD = Math.PI / 180.0;
 
 /** 
  * 根据两点间经纬度坐标，计算两点间距离，单位为米 

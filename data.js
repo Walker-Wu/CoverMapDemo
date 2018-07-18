@@ -41,7 +41,7 @@ Grid.prototype.draw = function (ctx) {
     grid1.draw(ctx);
     */
 
-var gridData = (function () {
+var gridData = (() => {
     function Position(sw, ne) {//构造随机点
         this.lng = Math.random() * (ne.lng - sw.lng) + sw.lng;
         this.lat = Math.random() * (ne.lat - sw.lat) + sw.lat;
@@ -65,11 +65,11 @@ var gridData = (function () {
     for (let i = 0; i < 1000; i++) {//区域范围内生成一组随机点
         pArr.push(new Position(reg.sw, reg.ne));
     }
-    let gridArr = pArr.map(function (p) {//所有随机点位置分别生成栅格
+    let gridArr = pArr.map((p) => {//所有随机点位置分别生成栅格
         let around = getAround(p.lng, p.lat, 10.0);
         let grid = new Grid(around);
-        grid.style = 'rgba(50, 50, ' + 255 * Math.random() + ', ' + Math.random() + ' )';
-        grid.info = pArr.indexOf(p);
+        grid.style = `rgba(50, 50, ${255 * Math.random()} , ${Math.random()} )`;//模板字符串（template string）是增强版的字符串，用反引号（`）标识
+        grid.info = `indexOf:${pArr.indexOf(p)}`;
         return grid;
     })
     return gridArr;
